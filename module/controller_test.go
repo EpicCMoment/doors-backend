@@ -35,7 +35,7 @@ func okReply(t *testing.T, data json.RawMessage) []byte {
 func TestGetModuleFetchesAndCaches(t *testing.T) {
 	data, _ := json.Marshal(Module{ID: "1", Name: "M", Path: "/P/M"})
 	f := &fakeExec{reply: okReply(t, data)}
-	c := NewController(f)
+	c := NewModuleController(f)
 
 	m, err := c.GetModule("/P/M")
 	if err != nil {
@@ -60,7 +60,7 @@ func TestControllerErrorEnvelope(t *testing.T) {
 	env := dxl.Envelope{Status: "error", Message: "boom"}
 	raw, _ := json.Marshal(env)
 	f := &fakeExec{reply: raw}
-	c := NewController(f)
+	c := NewModuleController(f)
 	if _, err := c.GetModule("/P/M"); err == nil || !strings.Contains(err.Error(), "boom") {
 		t.Errorf("expected boom error, got %v", err)
 	}
@@ -68,7 +68,7 @@ func TestControllerErrorEnvelope(t *testing.T) {
 
 func TestControllerTransportError(t *testing.T) {
 	f := &fakeExec{err: errors.New("conn refused")}
-	c := NewController(f)
+	c := NewModuleController(f)
 	if _, err := c.ListModules("/P"); err == nil {
 		t.Error("expected error")
 	}
@@ -78,7 +78,7 @@ func TestGetBaselinesCaches(t *testing.T) {
 	bs := []Baseline{{ModuleID: "1", Name: "b1"}}
 	data, _ := json.Marshal(bs)
 	f := &fakeExec{reply: okReply(t, data)}
-	c := NewController(f)
+	c := NewModuleController(f)
 	got, err := c.GetBaselines("1")
 	if err != nil || len(got) != 1 {
 		t.Fatalf("%v %+v", err, got)

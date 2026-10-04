@@ -7,24 +7,24 @@ import (
 	"gitlab.com/ariffil/doors-backend/dxl"
 )
 
-// ExecClient is the transport ModuleController needs; *dxl.Controller satisfies it.
+// ExecClient is the transport ModuleController needs; *dxl.ModuleController satisfies it.
 type ExecClient interface {
 	ExecTemplate(name string, params map[string]dxl.DxlLiteral) ([]byte, error)
 }
 
-// Controller manages Module/Requirement/Baseline/Table data fetched through
+// ModuleController manages Module/Requirement/Baseline/Table data fetched through
 // the DXL server, with an in-memory cache.
-type Controller struct {
+type ModuleController struct {
 	dxl   ExecClient
 	cache *Cache
 }
 
-func NewController(dxlClient ExecClient) *Controller {
-	return &Controller{dxl: dxlClient, cache: NewCache()}
+func NewModuleController(dxlClient ExecClient) *ModuleController {
+	return &ModuleController{dxl: dxlClient, cache: NewCache()}
 }
 
 // Cache exposes the underlying cache for inspection/invalidation.
-func (c *Controller) Cache() *Cache { return c.cache }
+func (c *ModuleController) Cache() *Cache { return c.cache }
 
 // decodeEnvelope parses the JSON reply and validates the status field.
 func decodeEnvelope(raw []byte, dst any) error {
@@ -48,7 +48,7 @@ func decodeEnvelope(raw []byte, dst any) error {
 }
 
 // GetModule returns a module by DOORS full path, from cache if present.
-func (c *Controller) GetModule(path string) (*Module, error) {
+func (c *ModuleController) GetModule(path string) (*Module, error) {
 	if m := c.cache.GetModule(path); m != nil {
 		return m, nil
 	}
@@ -65,7 +65,7 @@ func (c *Controller) GetModule(path string) (*Module, error) {
 }
 
 // ListModules returns the modules directly under the given folder path.
-func (c *Controller) ListModules(folderPath string) ([]Module, error) {
+func (c *ModuleController) ListModules(folderPath string) ([]Module, error) {
 	raw, err := c.dxl.ExecTemplate("list_modules", map[string]dxl.DxlLiteral{"path": dxl.String(folderPath)})
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (c *Controller) ListModules(folderPath string) ([]Module, error) {
 }
 
 // GetRequirements fetches all requirements of a module and caches them.
-func (c *Controller) GetRequirements(moduleID string) ([]Requirement, error) {
+func (c *ModuleController) GetRequirements(moduleID string) ([]Requirement, error) {
 	raw, err := c.dxl.ExecTemplate("get_requirements", map[string]dxl.DxlLiteral{"moduleId": dxl.String(moduleID)})
 	if err != nil {
 		return nil, err
@@ -97,7 +97,7 @@ func (c *Controller) GetRequirements(moduleID string) ([]Requirement, error) {
 }
 
 // GetBaselines lists baselines of a module (cached).
-func (c *Controller) GetBaselines(moduleID string) ([]Baseline, error) {
+func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
 	if bs := c.cache.GetBaselines(moduleID); bs != nil {
 		return bs, nil
 	}
@@ -115,7 +115,7 @@ func (c *Controller) GetBaselines(moduleID string) ([]Baseline, error) {
 
 // TraverseHierarchy returns the flat requirement outline of a module, in
 // document order, each entry linked to its parent via ParentID/Level.
-func (c *Controller) TraverseHierarchy(moduleID string) ([]HierarchyEntry, error) {
+func (c *ModuleController) TraverseHierarchy(moduleID string) ([]HierarchyEntry, error) {
 	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{"moduleId": dxl.String(moduleID)})
 	if err != nil {
 		return nil, err
@@ -128,4 +128,4 @@ func (c *Controller) TraverseHierarchy(moduleID string) ([]HierarchyEntry, error
 }
 
 // InvalidateModule forces a refresh of cached data for the given module path.
-func (c *Controller) InvalidateModule(path string) { c.cache.InvalidateModule(path) }
+func (c *ModuleController) InvalidateModule(path string) { c.cache.InvalidateModule(path) }

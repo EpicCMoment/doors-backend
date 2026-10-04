@@ -52,7 +52,7 @@ func TestControllerExecRoundTrip(t *testing.T) {
 	var port int
 	fmt.Sscanf(portStr, "%d", &port)
 
-	c := NewController(host, port)
+	c := NewDxlController(host, port)
 	reply, err := c.Exec("ping")
 	if err != nil {
 		t.Fatal(err)
@@ -75,7 +75,7 @@ func TestControllerExecTemplate(t *testing.T) {
 	var port int
 	fmt.Sscanf(portStr, "%d", &port)
 
-	c := NewController(host, port)
+	c := NewDxlController(host, port)
 	c.MustRegisterTemplate("get", `read({{.path}}, false)`)
 	reply, err := c.ExecTemplate("get", map[string]DxlLiteral{"path": String("/P/M")})
 	if err != nil {
@@ -99,7 +99,7 @@ func TestControllerShutdown(t *testing.T) {
 	var port int
 	fmt.Sscanf(portStr, "%d", &port)
 
-	c := NewController(host, port)
+	c := NewDxlController(host, port)
 	if err := c.Shutdown(); err != nil {
 		t.Fatal(err)
 	}

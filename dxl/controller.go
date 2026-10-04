@@ -9,10 +9,10 @@ import (
 	"time"
 )
 
-// Controller owns the TCP conversation with the DXL server running inside
+// DxlController owns the TCP conversation with the DXL server running inside
 // DOORS. The server handles one request per connection, so each Exec opens
 // a fresh connection; a mutex serializes concurrent callers.
-type Controller struct {
+type DxlController struct {
 	host string
 	port int
 
@@ -22,9 +22,9 @@ type Controller struct {
 	templates *TemplateCache
 }
 
-// NewController creates a controller targeting the given host/port.
-func NewController(host string, port int) *Controller {
-	return &Controller{
+// NewDxlController creates a controller targeting the given host/port.
+func NewDxlController(host string, port int) *DxlController {
+	return &DxlController{
 		host:      host,
 		port:      port,
 		timeout:   60 * time.Second,
@@ -33,25 +33,25 @@ func NewController(host string, port int) *Controller {
 }
 
 // RegisterTemplate parses and caches a script template under name.
-func (c *Controller) RegisterTemplate(name, tplText string) error {
+func (c *DxlController) RegisterTemplate(name, tplText string) error {
 	return c.templates.Register(name, tplText)
 }
 
 // MustRegisterTemplate panics on a parse error; handy at startup with embedded scripts.
-func (c *Controller) MustRegisterTemplate(name, tplText string) {
+func (c *DxlController) MustRegisterTemplate(name, tplText string) {
 	c.templates.MustRegister(name, tplText)
 }
 
 // Template renders a cached script with typed parameter injection.
-func (c *Controller) Template(name string, params map[string]DxlLiteral) (string, error) {
+func (c *DxlController) Template(name string, params map[string]DxlLiteral) (string, error) {
 	return c.templates.Render(name, params)
 }
 
 // SetTimeout overrides the per-request read timeout.
-func (c *Controller) SetTimeout(d time.Duration) { c.timeout = d }
+func (c *DxlController) SetTimeout(d time.Duration) { c.timeout = d }
 
 // ExecTemplate renders a cached template and executes it on the DXL server.
-func (c *Controller) ExecTemplate(name string, params map[string]DxlLiteral) ([]byte, error) {
+func (c *DxlController) ExecTemplate(name string, params map[string]DxlLiteral) ([]byte, error) {
 	script, err := c.Template(name, params)
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (c *Controller) ExecTemplate(name string, params map[string]DxlLiteral) ([]
 
 // Exec sends a rendered DXL script to the server and returns the raw JSON
 // reply (the script's final string expression).
-func (c *Controller) Exec(script string) ([]byte, error) {
+func (c *DxlController) Exec(script string) ([]byte, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -88,7 +88,7 @@ func (c *Controller) Exec(script string) ([]byte, error) {
 }
 
 // Shutdown asks the DXL server to stop and waits for its acknowledgement.
-func (c *Controller) Shutdown() error {
+func (c *DxlController) Shutdown() error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
