@@ -6,7 +6,8 @@ Module m = open(modulePath, false)
 string result
 
 if (m == null) {
-	result = jerr("module not found: " + modulePath)
+	string emsg = "module not found: " modulePath
+	result = jerr(emsg)
 } else {
 	bool ok = true
 	if (baselineId != "") {
@@ -21,25 +22,31 @@ if (m == null) {
 		}
 	}
 	if (!ok) {
-		result = jerr("baseline not found: " + baselineId)
+		string bld = "baseline not found: " baselineId
+		result = jerr(bld)
 	} else {
 		result = "{\"status\":\"ok\",\"data\":["
 		Object o
 		bool first = true
 		for o in m do {
 			if (!first) {
-				result = result + ","
+				result = result ","
 			}
 			first = false
-			result = result + "{\"id\":" + jstr(intToStr(o."Object Number"))
-				+ ",\"modulePath\":" + jstr(modulePath)
-				+ ",\"baselineId\":" + jstr(baselineId)
-				+ ",\"heading\":" + jstr(o."Object Heading")
-				+ ",\"text\":" + jstr(o."Object Text")
-				+ ",\"attributes\":{}"
-				+ "}"
+			result = result "{\"id\":"
+			result = result jstr(intToStr(o."Object Number"))
+			result = result ",\"modulePath\":"
+			result = result jstr(modulePath)
+			result = result ",\"baselineId\":"
+			result = result jstr(baselineId)
+			result = result ",\"heading\":"
+			result = result jstr(o."Object Heading")
+			result = result ",\"text\":"
+			result = result jstr(o."Object Text")
+			result = result ",\"attributes\":{}"
+			result = result "}"
 		}
-		result = result + "]}"
+		result = result "]}"
 	}
 }
 

@@ -1,6 +1,4 @@
 // get_module: returns module metadata as JSON.
-// NOTE: DOORS-API calls below are best-effort against DXL 9.7 docs and
-// must be runtime-validated on a real DOORS host.
 string path = {{.path}}
 string baselineId = {{.baselineId}}
 
@@ -8,16 +6,28 @@ Module m = open(path, false)
 string result
 
 if (m == null) {
-	result = jerr("module not found: " + path)
+	string emsg = "module not found: " path
+	result = jerr(emsg)
 } else {
 	result = "{\"status\":\"ok\",\"data\":{"
-		+ "\"id\":" + jstr(uniqueID(m)) + ","
-		+ "\"name\":" + jstr(name(m)) + ","
-		+ "\"path\":" + jstr(fullName(m)) + ","
-		+ "\"baselineId\":" + jstr(baselineId) + ","
-		+ "\"createdOn\":" + jstr("") + ","
-		+ "\"modifiedOn\":" + jstr("")
-		+ "}}"
+	result = result "\"id\":"
+	result = result jstr(uniqueID(m))
+	result = result ","
+	result = result "\"name\":"
+	result = result jstr(name(m))
+	result = result ","
+	result = result "\"path\":"
+	result = result jstr(fullName(m))
+	result = result ","
+	result = result "\"baselineId\":"
+	result = result jstr(baselineId)
+	result = result ","
+	result = result "\"createdOn\":"
+	result = result jstr("")
+	result = result ","
+	result = result "\"modifiedOn\":"
+	result = result jstr("")
+	result = result "}}"
 }
 
 return_ = result

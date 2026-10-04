@@ -5,24 +5,30 @@ Module m = open(modulePath, false)
 string result
 
 if (m == null) {
-	result = jerr("module not found: " + modulePath)
+	string emsg = "module not found: " modulePath
+	result = jerr(emsg)
 } else {
 	result = "{\"status\":\"ok\",\"data\":["
 	Baseline b
 	bool first = true
 	for b in m do {
 		if (!first) {
-			result = result + ","
+			result = result ","
 		}
 		first = false
-		result = result + "{\"id\":" + jstr(baselineName(b))
-			+ ",\"modulePath\":" + jstr(modulePath)
-			+ ",\"name\":" + jstr(baselineName(b))
-			+ ",\"createdOn\":" + jstr("")
-			+ ",\"comment\":" + jstr(annotation(b))
-			+ "}"
+		result = result "{\"id\":"
+		result = result jstr(baselineName(b))
+		result = result ",\"modulePath\":"
+		result = result jstr(modulePath)
+		result = result ",\"name\":"
+		result = result jstr(baselineName(b))
+		result = result ",\"createdOn\":"
+		result = result jstr("")
+		result = result ",\"comment\":"
+		result = result jstr(annotation(b))
+		result = result "}"
 	}
-	result = result + "]}"
+	result = result "]}"
 }
 
 return_ = result
