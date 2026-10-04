@@ -19,8 +19,12 @@ func RenderServerScript(port int) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("parse embedded server script: %w", err)
 	}
+
+	portLiteral := Int(int64(port)).Literal()
+	params := map[string]string{"Port": portLiteral}
+
 	var buf bytes.Buffer
-	if err := tpl.Execute(&buf, map[string]int{"Port": port}); err != nil {
+	if err := tpl.Execute(&buf, params); err != nil {
 		return "", fmt.Errorf("render server script: %w", err)
 	}
 	return buf.String(), nil
