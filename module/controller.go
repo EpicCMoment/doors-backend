@@ -47,7 +47,7 @@ func decodeEnvelope(raw []byte, dst any) error {
 	return nil
 }
 
-
+// GetModule returns a module's current view (baselineID == "") or a baseline view.
 func (c *ModuleController) GetModule(path, baselineID string) (*Module, error) {
 	if m := c.cache.GetModule(path, baselineID); m != nil {
 		return m, nil
