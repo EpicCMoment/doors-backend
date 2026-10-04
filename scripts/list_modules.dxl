@@ -24,4 +24,4 @@ for m in all Modules do {
 }
 
 result = result + "]}"
-result
+return_ = result

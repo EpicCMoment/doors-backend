@@ -28,4 +28,4 @@ if (m == null) {
 	result = result + "]}"
 }
 
-result
+return_ = result

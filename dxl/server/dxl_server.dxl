@@ -2,16 +2,17 @@
 // TCP server running inside a background DOORS process.
 // Protocol: one client connection per request.
 //   Client -> Server : a DXL code string (templated script, fully rendered)
-//   Server -> Client : the result of eval_ on that string.
-//                       Scripts must produce their result as a string
-//                       expression; our utility scripts end with a JSON string.
-//                       On failure the server returns a JSON error envelope.
+//   Server -> Client : the JSON string the script assigned to return_.
+//                       Utility scripts set return_ to their JSON envelope
+//                       ({"status":...}); on eval_ failure the server
+//                       returns a JSON error envelope.
 // Magic request strings:
 //   "shutdown_" -> graceful server stop (replies "done_")
 
 IPC ipc = server {{.Port}}
 string request
 string ans
+string return_
 
 while (true) {
 	if (accept(ipc)) {
@@ -32,12 +33,18 @@ while (true) {
 		break
 	}
 
+	return_ = ""
 	ans = eval_ request
 	if (ans == "errors in eval_ string") {
 		print "errors in request\n"
 		ans = "{\"status\":\"error\",\"message\":\"errors in eval_ string\"}"
+	} else if (return_ == "") {
+		ans = "{\"status\":\"error\",\"message\":\"script did not assign return_\"}"
+	} else {
+		ans = return_
 	}
-
+	// reset for the next request
+	return_ = ""
 	send(ipc, ans)
 	disconnect(ipc)
 }

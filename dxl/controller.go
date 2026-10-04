@@ -59,8 +59,8 @@ func (c *DxlController) ExecTemplate(name string, params map[string]DxlLiteral) 
 	return c.Exec(script)
 }
 
-// Exec sends a rendered DXL script to the server and returns the raw JSON
-// reply (the script's final string expression).
+// Exec sends a fully-rendered DXL script to the server and returns the raw
+// JSON reply — i.e. whatever the script assigned to return_.
 func (c *DxlController) Exec(script string) ([]byte, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()

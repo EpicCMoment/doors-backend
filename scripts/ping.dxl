@@ -1,2 +1,2 @@
 // ping: smoke test for the eval_ plumbing. Returns a fixed ok envelope.
-"{\"status\":\"ok\",\"data\":{\"pong\":true}}"
+return_ = "{\"status\":\"ok\",\"data\":{\"pong\":true}}"
