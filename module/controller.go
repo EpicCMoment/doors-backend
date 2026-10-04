@@ -7,7 +7,7 @@ import (
 	"gitlab.com/ariffil/doors-backend/dxl"
 )
 
-// ExecClient is the transport ModuleController needs; *dxl.ModuleController satisfies it.
+// ExecClient is the transport ModuleController needs; *dxl.DxlController satisfies it.
 type ExecClient interface {
 	ExecTemplate(name string, params map[string]dxl.DxlLiteral) ([]byte, error)
 }
