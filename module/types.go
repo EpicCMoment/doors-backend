@@ -2,13 +2,12 @@ package module
 
 // Module mirrors the JSON object returned by get_module / list_modules scripts.
 type Module struct {
-	ID            string `json:"id"`
-	Name          string `json:"name"`
-	Path          string `json:"path"`
-	BaselineID    string `json:"baselineId,omitempty"` // empty = current view
-	CreatedOn     string `json:"createdOn,omitempty"`
-	ModifiedOn    string `json:"modifiedOn,omitempty"`
-	BaselineCount int    `json:"baselineCount,omitempty"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Path       string `json:"path"`
+	BaselineID string `json:"baselineId,omitempty"` // empty = current view
+	CreatedOn  string `json:"createdOn,omitempty"`
+	ModifiedOn string `json:"modifiedOn,omitempty"`
 }
 
 // Requirement mirrors one requirement row in a module.
