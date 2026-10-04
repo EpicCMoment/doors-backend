@@ -26,10 +26,6 @@ while (true) {
 		break
 	}
 
-	print "request: "
-	print request
-	print "\n"
-
 	errors = false
 
 	if (request == "shutdown_") {
