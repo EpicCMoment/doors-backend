@@ -9,6 +9,7 @@ if (m == null) {
 	string emsg = "module not found: " modulePath
 	result = jerr(emsg)
 } else {
+	Module target = m
 	bool ok = true
 	if (baselineId != "") {
 		Baseline b
@@ -16,7 +17,7 @@ if (m == null) {
 		for b in m do {
 			if (baselineName(b) == baselineId) {
 				ok = true
-				load(b, true)
+				target = load(m, b, false)
 				break
 			}
 		}
@@ -28,7 +29,7 @@ if (m == null) {
 		result = "{\"status\":\"ok\",\"data\":["
 		Object o
 		bool first = true
-		for o in m do {
+		for o in target do {
 			if (!first) {
 				result = result ","
 			}
