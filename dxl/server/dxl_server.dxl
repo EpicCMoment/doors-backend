@@ -8,8 +8,6 @@
 //                       On failure the server returns a JSON error envelope.
 // Magic request strings:
 //   "shutdown_" -> graceful server stop (replies "done_")
-//   "errors_"   -> abort the server loop
-//   "quit_"     -> ignore this request, keep looping
 
 IPC ipc = server {{.Port}}
 string request
@@ -38,16 +36,6 @@ while (true) {
 		send(ipc, "done_")
 		disconnect(ipc)
 		break
-	}
-
-	if (request == "errors_") {
-		disconnect(ipc)
-		break
-	}
-
-	if (request == "quit_") {
-		disconnect(ipc)
-		continue
 	}
 
 	ans = eval_ request
