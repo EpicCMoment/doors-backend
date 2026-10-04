@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ariffil/doors-backend/dxl"
+	"github.com/EpicCMoment/doors-backend/dxl"
 )
 
 type fakeExec struct {
