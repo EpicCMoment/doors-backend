@@ -113,17 +113,18 @@ func (c *Controller) GetBaselines(moduleID string) ([]Baseline, error) {
 	return bs, nil
 }
 
-// TraverseHierarchy returns the requirement tree of a module.
-func (c *Controller) TraverseHierarchy(moduleID string) ([]HierarchyNode, error) {
+// TraverseHierarchy returns the flat requirement outline of a module, in
+// document order, each entry linked to its parent via ParentID/Level.
+func (c *Controller) TraverseHierarchy(moduleID string) ([]HierarchyEntry, error) {
 	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{"moduleId": dxl.String(moduleID)})
 	if err != nil {
 		return nil, err
 	}
-	var nodes []HierarchyNode
-	if err := decodeEnvelope(raw, &nodes); err != nil {
+	var entries []HierarchyEntry
+	if err := decodeEnvelope(raw, &entries); err != nil {
 		return nil, err
 	}
-	return nodes, nil
+	return entries, nil
 }
 
 // InvalidateModule forces a refresh of cached data for the given module path.

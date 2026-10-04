@@ -40,9 +40,13 @@ type Table struct {
 	Rows          int      `json:"rows,omitempty"`
 }
 
-// HierarchyNode is one node in a module/requirement tree.
-type HierarchyNode struct {
-	ID       string          `json:"id"`
-	Label    string          `json:"label,omitempty"`
-	Children []HierarchyNode `json:"children,omitempty"`
+// HierarchyEntry is one flat node in a module's requirement outline, linked
+// to its parent. Flat lists stream well and are easy for AI agents to consume;
+// the tree can be reconstructed with "level"/"parentId" when needed.
+type HierarchyEntry struct {
+	ID       string `json:"id"`
+	ParentID string `json:"parentId,omitempty"`
+	Level    int    `json:"level"`
+	Heading  string `json:"heading,omitempty"`
+	Text     string `json:"text,omitempty"`
 }
