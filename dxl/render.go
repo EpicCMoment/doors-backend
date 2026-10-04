@@ -43,8 +43,8 @@ type DxlLiteral struct {
 }
 
 func String(s string) DxlLiteral { return DxlLiteral{S: s, IsS: true} }
-func Int(n int64) DxlLiteral    { return DxlLiteral{N: n, IsN: true} }
-func Bool(b bool) DxlLiteral    { return DxlLiteral{B: b, IsB: true} }
+func Int(n int64) DxlLiteral     { return DxlLiteral{N: n, IsN: true} }
+func Bool(b bool) DxlLiteral     { return DxlLiteral{B: b, IsB: true} }
 
 // Raw splices pre-validated DXL source directly into the script.
 func Raw(src string) DxlLiteral { return DxlLiteral{S: src, Raw: true, IsS: true} }
