@@ -59,6 +59,12 @@ string intToStr(int n) {
 string jerr(string msg) {
 	return "{\"status\":\"error\",\"message\":" + jstr(msg) + "}"
 }
+
+// Composite baseline label: "<major>.<minor><suffix> (<annotation>)".
+// Used both as the baseline's id and its display name.
+string baselineName(Baseline b) {
+	return intToStr(major(b)) + "." + intToStr(minor(b)) + suffix(b) + " (" + annotation(b) + ")"
+}
 // --------------------------
 `
 

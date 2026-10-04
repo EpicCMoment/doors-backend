@@ -1,6 +1,4 @@
 // get_baselines: baseline names of a module.
-// Best-effort against DXL 9.7 docs; the exact baseline-enumeration builtin
-// must be confirmed on a real DOORS host.
 string moduleId = {{.moduleId}}
 
 Module m = open(moduleId, false)
@@ -9,10 +7,22 @@ string result
 if (m == null) {
 	result = jerr("module not found: " + moduleId)
 } else {
-	result = "{\"status\":\"ok\",\"data\":[]}"
-	// TODO: enumerate baseline names once the correct DXL builtin is
-	// confirmed on the DOORS 9.7 host (candidates: baseline enumeration via
-	// module attributes / Baselines link).
+	result = "{\"status\":\"ok\",\"data\":["
+	Baseline b
+	bool first = true
+	for b in m do {
+		if (!first) {
+			result = result + ","
+		}
+		first = false
+		result = result + "{\"id\":" + jstr(baselineName(b))
+			+ ",\"moduleId\":" + jstr(moduleId)
+			+ ",\"name\":" + jstr(baselineName(b))
+			+ ",\"createdOn\":" + jstr("")
+			+ ",\"comment\":" + jstr(annotation(b))
+			+ "}"
+	}
+	result = result + "]}"
 }
 
 return_ = result
