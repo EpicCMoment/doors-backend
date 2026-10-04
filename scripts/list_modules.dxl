@@ -1,0 +1,27 @@
+// list_modules: modules directly under the given path prefix.
+// Best-effort against DXL 9.7 docs; validate on a real DOORS host.
+string path = {{.path}}
+
+string result = "{\"status\":\"ok\",\"data\":["
+Module m
+bool first = true
+int count = 0
+
+for m in all Modules do {
+	string fn = fullName(m)
+	if (length(fn) > length(path) && fn[0:length(path)] == path) {
+		if (!first) {
+			result = result + ","
+		}
+		first = false
+		count++
+		result = result + "{\"id\":" + jstr(fn)
+			+ ",\"name\":" + jstr(name(m))
+			+ ",\"path\":" + jstr(fn)
+			+ ",\"baselineId\":\"\""
+			+ "}"
+	}
+}
+
+result = result + "]}"
+result

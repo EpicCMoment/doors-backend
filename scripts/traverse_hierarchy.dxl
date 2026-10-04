@@ -1,0 +1,31 @@
+// traverse_hierarchy: flat requirement outline with parent links and levels.
+// Best-effort against DXL 9.7 docs; validate on a real DOORS host.
+string moduleId = {{.moduleId}}
+string baselineId = {{.baselineId}}
+
+Module m = open(moduleId, false)
+string result
+
+if (m == null) {
+	result = jerr("module not found: " + moduleId)
+} else {
+	result = "{\"status\":\"ok\",\"data\":["
+	Object o
+	bool first = true
+	for o in m do {
+		if (!first) {
+			result = result + ","
+		}
+		first = false
+		result = result + "{\"id\":" + jstr(intToStr(o."Object Number"))
+			+ ",\"moduleId\":" + jstr(moduleId)
+			+ ",\"baselineId\":" + jstr(baselineId)
+			+ ",\"parentId\":\"\""
+			+ ",\"level\":" + intToStr(o."Level")
+			+ ",\"heading\":" + jstr(o."Object Heading")
+			+ "}"
+	}
+	result = result + "]}"
+}
+
+result

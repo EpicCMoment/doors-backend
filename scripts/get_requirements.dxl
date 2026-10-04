@@ -1,0 +1,31 @@
+// get_requirements: requirements of a module (current or baseline view).
+// Best-effort against DXL 9.7 docs; validate on a real DOORS host.
+string moduleId = {{.moduleId}}
+string baselineId = {{.baselineId}}
+
+Module m = open(moduleId, false)
+string result
+
+if (m == null) {
+	result = jerr("module not found: " + moduleId)
+} else {
+	result = "{\"status\":\"ok\",\"data\":["
+	Object o
+	bool first = true
+	for o in m do {
+		if (!first) {
+			result = result + ","
+		}
+		first = false
+		result = result + "{\"id\":" + jstr(intToStr(o."Object Number"))
+			+ ",\"moduleId\":" + jstr(moduleId)
+			+ ",\"baselineId\":" + jstr(baselineId)
+			+ ",\"heading\":" + jstr(o."Object Heading")
+			+ ",\"text\":" + jstr(o."Object Text")
+			+ ",\"attributes\":{}"
+			+ "}"
+	}
+	result = result + "]}"
+}
+
+result

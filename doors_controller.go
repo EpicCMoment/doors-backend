@@ -6,6 +6,7 @@ import (
 
 	"github.com/EpicCMoment/doors-backend/dxl"
 	"github.com/EpicCMoment/doors-backend/module"
+	"github.com/EpicCMoment/doors-backend/scripts"
 )
 
 // DoorsController is the single entry point of the backend. It wires the
@@ -38,6 +39,14 @@ func Init(cfg Config) (*DoorsController, error) {
 		}
 		d.dxl = dxl.NewDxlController(cfg.Host, cfg.Port)
 		d.modules = module.NewModuleController(d.dxl)
+		for _, name := range scripts.Names() {
+			body, err := scripts.Load(name)
+			if err != nil {
+				doorsErr = err
+				return
+			}
+			d.dxl.MustRegisterTemplate(name, body)
+		}
 		doorsDefault = d
 	})
 	return doorsDefault, doorsErr
