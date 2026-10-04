@@ -3,8 +3,9 @@ package module
 import "sync"
 
 // Cache keeps fetched modules, requirements, and baselines so repeated
-// access does not hit the DXL server again. Modules are cached by path/ID,
-// requirements by the module-scoped "moduleID/requirementID" composite.
+// access does not hit the DXL server again. Cache entries are keyed per
+// baseline view: a module/requirement cached at baseline B1 is distinct
+// from the same object viewed at B2 (or live).
 type Cache struct {
 	mu           sync.RWMutex
 	modules      map[string]*Module
@@ -20,6 +21,20 @@ func NewCache() *Cache {
 	}
 }
 
+func moduleKey(path, baselineID string) string {
+	if baselineID == "" {
+		return path + "@live"
+	}
+	return path + "@" + baselineID
+}
+
+func requirementKey(moduleID, reqID, baselineID string) string {
+	if baselineID == "" {
+		return moduleID + "/" + reqID + "@live"
+	}
+	return moduleID + "/" + reqID + "@" + baselineID
+}
+
 func (c *Cache) PutModule(m *Module) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -27,25 +42,23 @@ func (c *Cache) PutModule(m *Module) {
 	if key == "" {
 		key = m.ID
 	}
-	c.modules[key] = m
+	c.modules[moduleKey(key, m.BaselineID)] = m
 }
-func (c *Cache) GetModule(id string) *Module {
+func (c *Cache) GetModule(path, baselineID string) *Module {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.modules[id]
+	return c.modules[moduleKey(path, baselineID)]
 }
-
-func requirementKey(moduleID, reqID string) string { return moduleID + "/" + reqID }
 
 func (c *Cache) PutRequirement(r *Requirement) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.requirements[requirementKey(r.ModuleID, r.ID)] = r
+	c.requirements[requirementKey(r.ModuleID, r.ID, r.BaselineID)] = r
 }
-func (c *Cache) GetRequirement(moduleID, reqID string) *Requirement {
+func (c *Cache) GetRequirement(moduleID, reqID, baselineID string) *Requirement {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.requirements[requirementKey(moduleID, reqID)]
+	return c.requirements[requirementKey(moduleID, reqID, baselineID)]
 }
 
 func (c *Cache) PutBaselines(moduleID string, bs []Baseline) {
@@ -59,14 +72,19 @@ func (c *Cache) GetBaselines(moduleID string) []Baseline {
 	return c.baselines[moduleID]
 }
 
-// InvalidateModule drops a module and its derived entries.
-func (c *Cache) InvalidateModule(id string) {
+// InvalidateModule drops cached entries for one module (all baselines, and its
+// baselines list + requirements). Use InvalidateModuleBaseline for finer control.
+func (c *Cache) InvalidateModule(moduleRef string) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	delete(c.modules, id)
-	delete(c.baselines, id)
+	for k := range c.modules {
+		if len(k) >= len(moduleRef) && k[:len(moduleRef)] == moduleRef {
+			delete(c.modules, k)
+		}
+	}
+	delete(c.baselines, moduleRef)
 	for rid, r := range c.requirements {
-		if r.ModuleID == id {
+		if r.ModuleID == moduleRef {
 			delete(c.requirements, rid)
 		}
 	}

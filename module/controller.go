@@ -47,18 +47,24 @@ func decodeEnvelope(raw []byte, dst any) error {
 	return nil
 }
 
-// GetModule returns a module by DOORS full path, from cache if present.
-func (c *ModuleController) GetModule(path string) (*Module, error) {
-	if m := c.cache.GetModule(path); m != nil {
+// GetModule returns a module's live view (baselineID == "") or a baseline view.
+func (c *ModuleController) GetModule(path, baselineID string) (*Module, error) {
+	if m := c.cache.GetModule(path, baselineID); m != nil {
 		return m, nil
 	}
-	raw, err := c.dxl.ExecTemplate("get_module", map[string]dxl.DxlLiteral{"path": dxl.String(path)})
+	raw, err := c.dxl.ExecTemplate("get_module", map[string]dxl.DxlLiteral{
+		"path":       dxl.String(path),
+		"baselineId": dxl.String(baselineID),
+	})
 	if err != nil {
 		return nil, err
 	}
 	var m Module
 	if err := decodeEnvelope(raw, &m); err != nil {
 		return nil, err
+	}
+	if m.BaselineID == "" {
+		m.BaselineID = baselineID
 	}
 	c.cache.PutModule(&m)
 	return &m, nil
@@ -81,8 +87,11 @@ func (c *ModuleController) ListModules(folderPath string) ([]Module, error) {
 }
 
 // GetRequirements fetches all requirements of a module and caches them.
-func (c *ModuleController) GetRequirements(moduleID string) ([]Requirement, error) {
-	raw, err := c.dxl.ExecTemplate("get_requirements", map[string]dxl.DxlLiteral{"moduleId": dxl.String(moduleID)})
+func (c *ModuleController) GetRequirements(moduleID, baselineID string) ([]Requirement, error) {
+	raw, err := c.dxl.ExecTemplate("get_requirements", map[string]dxl.DxlLiteral{
+		"moduleId":   dxl.String(moduleID),
+		"baselineId": dxl.String(baselineID),
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +100,9 @@ func (c *ModuleController) GetRequirements(moduleID string) ([]Requirement, erro
 		return nil, err
 	}
 	for i := range reqs {
+		if reqs[i].BaselineID == "" {
+			reqs[i].BaselineID = baselineID
+		}
 		c.cache.PutRequirement(&reqs[i])
 	}
 	return reqs, nil
@@ -115,14 +127,22 @@ func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
 
 // TraverseHierarchy returns the flat requirement outline of a module, in
 // document order, each entry linked to its parent via ParentID/Level.
-func (c *ModuleController) TraverseHierarchy(moduleID string) ([]HierarchyEntry, error) {
-	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{"moduleId": dxl.String(moduleID)})
+func (c *ModuleController) TraverseHierarchy(moduleID, baselineID string) ([]HierarchyEntry, error) {
+	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{
+		"moduleId":   dxl.String(moduleID),
+		"baselineId": dxl.String(baselineID),
+	})
 	if err != nil {
 		return nil, err
 	}
 	var entries []HierarchyEntry
 	if err := decodeEnvelope(raw, &entries); err != nil {
 		return nil, err
+	}
+	for i := range entries {
+		if entries[i].BaselineID == "" {
+			entries[i].BaselineID = baselineID
+		}
 	}
 	return entries, nil
 }

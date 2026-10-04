@@ -37,7 +37,7 @@ func TestGetModuleFetchesAndCaches(t *testing.T) {
 	f := &fakeExec{reply: okReply(t, data)}
 	c := NewModuleController(f)
 
-	m, err := c.GetModule("/P/M")
+	m, err := c.GetModule("/P/M", "")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -50,7 +50,7 @@ func TestGetModuleFetchesAndCaches(t *testing.T) {
 
 	// second call should hit the cache, not ExecTemplate
 	f.reply = nil
-	m2, err := c.GetModule("/P/M")
+	m2, err := c.GetModule("/P/M", "")
 	if err != nil || m2.Name != "M" {
 		t.Fatalf("cache miss: %v %+v", err, m2)
 	}
@@ -61,7 +61,7 @@ func TestControllerErrorEnvelope(t *testing.T) {
 	raw, _ := json.Marshal(env)
 	f := &fakeExec{reply: raw}
 	c := NewModuleController(f)
-	if _, err := c.GetModule("/P/M"); err == nil || !strings.Contains(err.Error(), "boom") {
+	if _, err := c.GetModule("/P/M", ""); err == nil || !strings.Contains(err.Error(), "boom") {
 		t.Errorf("expected boom error, got %v", err)
 	}
 }

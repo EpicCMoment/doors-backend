@@ -5,6 +5,7 @@ type Module struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
 	Path          string `json:"path"`
+	BaselineID    string `json:"baselineId,omitempty"` // empty = live view
 	CreatedOn     string `json:"createdOn,omitempty"`
 	ModifiedOn    string `json:"modifiedOn,omitempty"`
 	BaselineCount int    `json:"baselineCount,omitempty"`
@@ -14,6 +15,7 @@ type Module struct {
 type Requirement struct {
 	ID         string            `json:"id"`
 	ModuleID   string            `json:"moduleId"`
+	BaselineID string            `json:"baselineId,omitempty"` // empty = live view
 	Heading    string            `json:"heading"`
 	Text       string            `json:"text"`
 	CreatedBy  string            `json:"createdBy,omitempty"`
@@ -24,7 +26,8 @@ type Requirement struct {
 // Baseline mirrors a module baseline.
 type Baseline struct {
 	ModuleID  string `json:"moduleId"`
-	Name      string `json:"name"`
+	Name      string `json:"name"` // baseline name within the module
+	ID        string `json:"id,omitempty"`
 	CreatedOn string `json:"createdOn,omitempty"`
 	Comment   string `json:"comment,omitempty"`
 }
@@ -35,6 +38,7 @@ type Table struct {
 	ID            string   `json:"id"`
 	ModuleID      string   `json:"moduleId"`
 	RequirementID string   `json:"requirementId"`
+	BaselineID    string   `json:"baselineId,omitempty"`
 	Title         string   `json:"title,omitempty"`
 	Columns       []string `json:"columns,omitempty"`
 	Rows          int      `json:"rows,omitempty"`
@@ -44,9 +48,11 @@ type Table struct {
 // to its parent. Flat lists stream well and are easy for AI agents to consume;
 // the tree can be reconstructed with "level"/"parentId" when needed.
 type HierarchyEntry struct {
-	ID       string `json:"id"`
-	ParentID string `json:"parentId,omitempty"`
-	Level    int    `json:"level"`
-	Heading  string `json:"heading,omitempty"`
-	Text     string `json:"text,omitempty"`
+	ID         string `json:"id"`
+	ModuleID   string `json:"moduleId,omitempty"`
+	BaselineID string `json:"baselineId,omitempty"`
+	ParentID   string `json:"parentId,omitempty"`
+	Level      int    `json:"level"`
+	Heading    string `json:"heading,omitempty"`
+	Text       string `json:"text,omitempty"`
 }
