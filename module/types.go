@@ -29,12 +29,15 @@ type Baseline struct {
 	Comment   string `json:"comment,omitempty"`
 }
 
-// Table mirrors an embedded DOORS table.
+// Table mirrors an embedded DOORS table. Ownership is module-scoped:
+// the same requirement ID can exist in different modules, so both keys are needed.
 type Table struct {
-	ID      string   `json:"id"`
-	Title   string   `json:"title,omitempty"`
-	Columns []string `json:"columns,omitempty"`
-	Rows    int      `json:"rows,omitempty"`
+	ID            string   `json:"id"`
+	ModuleID      string   `json:"moduleId"`
+	RequirementID string   `json:"requirementId"`
+	Title         string   `json:"title,omitempty"`
+	Columns       []string `json:"columns,omitempty"`
+	Rows          int      `json:"rows,omitempty"`
 }
 
 // HierarchyNode is one node in a module/requirement tree.

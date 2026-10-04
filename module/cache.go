@@ -3,7 +3,8 @@ package module
 import "sync"
 
 // Cache keeps fetched modules, requirements, and baselines so repeated
-// access does not hit the DXL server again. Concrete types are cached by ID.
+// access does not hit the DXL server again. Modules are cached by path/ID,
+// requirements by the module-scoped "moduleID/requirementID" composite.
 type Cache struct {
 	mu           sync.RWMutex
 	modules      map[string]*Module
@@ -34,15 +35,17 @@ func (c *Cache) GetModule(id string) *Module {
 	return c.modules[id]
 }
 
+func requirementKey(moduleID, reqID string) string { return moduleID + "/" + reqID }
+
 func (c *Cache) PutRequirement(r *Requirement) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.requirements[r.ID] = r
+	c.requirements[requirementKey(r.ModuleID, r.ID)] = r
 }
-func (c *Cache) GetRequirement(id string) *Requirement {
+func (c *Cache) GetRequirement(moduleID, reqID string) *Requirement {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.requirements[id]
+	return c.requirements[requirementKey(moduleID, reqID)]
 }
 
 func (c *Cache) PutBaselines(moduleID string, bs []Baseline) {
