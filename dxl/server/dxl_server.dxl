@@ -1,0 +1,61 @@
+// dxl_server.dxl
+// TCP server running inside a background DOORS process.
+// Protocol: one client connection per request.
+//   Client -> Server : a DXL code string (templated script, fully rendered)
+//   Server -> Client : the result of eval_ on that string.
+//                       Scripts must produce their result as a string
+//                       expression; our utility scripts end with a JSON string.
+//                       On failure the server returns a JSON error envelope.
+// Magic request strings:
+//   "shutdown_" -> graceful server stop (replies "done_")
+//   "errors_"   -> abort the server loop
+//   "quit_"     -> ignore this request, keep looping
+
+IPC ipc = server {{.Port}}
+string request
+bool errors
+string ans
+
+while (true) {
+	if (accept(ipc)) {
+		if (!recv(ipc, request)) {
+			warn "client disconnected before sending"
+			disconnect(ipc)
+			continue
+		}
+	} else {
+		warn "error accepting client connection"
+		break
+	}
+
+	print "request: "
+	print request
+	print "\n"
+
+	errors = false
+
+	if (request == "shutdown_") {
+		send(ipc, "done_")
+		disconnect(ipc)
+		break
+	}
+
+	if (request == "errors_") {
+		disconnect(ipc)
+		break
+	}
+
+	if (request == "quit_") {
+		disconnect(ipc)
+		continue
+	}
+
+	ans = eval_ request
+	if (ans == "errors in eval_ string") {
+		print "errors in request\n"
+		ans = "{\"status\":\"error\",\"message\":\"errors in eval_ string\"}"
+	}
+
+	send(ipc, ans)
+	disconnect(ipc)
+}
