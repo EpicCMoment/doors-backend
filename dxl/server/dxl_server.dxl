@@ -12,7 +12,6 @@
 IPC ipc = server {{.Port}}
 string request
 string ans
-string return_
 
 while (true) {
 	if (accept(ipc)) {
