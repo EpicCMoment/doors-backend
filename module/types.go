@@ -13,7 +13,7 @@ type Module struct {
 // Requirement mirrors one requirement row in a module.
 type Requirement struct {
 	ID         string            `json:"id"`
-	ModuleID   string            `json:"moduleId"`
+	ModulePath   string            `json:"modulePath"`
 	BaselineID string            `json:"baselineId,omitempty"` // empty = current view
 	Heading    string            `json:"heading"`
 	Text       string            `json:"text"`
@@ -24,7 +24,7 @@ type Requirement struct {
 
 // Baseline mirrors a module baseline.
 type Baseline struct {
-	ModuleID  string `json:"moduleId"`
+	ModulePath  string `json:"modulePath"`
 	Name      string `json:"name"` // baseline name within the module
 	ID        string `json:"id,omitempty"`
 	CreatedOn string `json:"createdOn,omitempty"`
@@ -35,7 +35,7 @@ type Baseline struct {
 // the same requirement ID can exist in different modules, so both keys are needed.
 type Table struct {
 	ID            string   `json:"id"`
-	ModuleID      string   `json:"moduleId"`
+	ModulePath      string   `json:"modulePath"`
 	RequirementID string   `json:"requirementId"`
 	BaselineID    string   `json:"baselineId,omitempty"`
 	Title         string   `json:"title,omitempty"`
@@ -48,7 +48,7 @@ type Table struct {
 // the tree can be reconstructed with "level"/"parentId" when needed.
 type HierarchyEntry struct {
 	ID         string `json:"id"`
-	ModuleID   string `json:"moduleId,omitempty"`
+	ModulePath   string `json:"modulePath,omitempty"`
 	BaselineID string `json:"baselineId,omitempty"`
 	ParentID   string `json:"parentId,omitempty"`
 	Level      int    `json:"level"`

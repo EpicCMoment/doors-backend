@@ -1,12 +1,12 @@
 // traverse_hierarchy: flat requirement outline with parent links and levels.
-string moduleId = {{.moduleId}}
+string modulePath = {{.modulePath}}
 string baselineId = {{.baselineId}}
 
-Module m = open(moduleId, false)
+Module m = open(modulePath, false)
 string result
 
 if (m == null) {
-	result = jerr("module not found: " + moduleId)
+	result = jerr("module not found: " + modulePath)
 } else {
 	bool ok = true
 	if (baselineId != "") {
@@ -32,7 +32,7 @@ if (m == null) {
 			}
 			first = false
 			result = result + "{\"id\":" + jstr(intToStr(o."Object Number"))
-				+ ",\"moduleId\":" + jstr(moduleId)
+				+ ",\"modulePath\":" + jstr(modulePath)
 				+ ",\"baselineId\":" + jstr(baselineId)
 				+ ",\"parentId\":\"\""
 				+ ",\"level\":" + intToStr(o."Level")

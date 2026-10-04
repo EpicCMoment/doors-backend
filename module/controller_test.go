@@ -75,7 +75,7 @@ func TestControllerTransportError(t *testing.T) {
 }
 
 func TestGetBaselinesCaches(t *testing.T) {
-	bs := []Baseline{{ModuleID: "1", Name: "b1"}}
+	bs := []Baseline{{ModulePath: "1", Name: "b1"}}
 	data, _ := json.Marshal(bs)
 	f := &fakeExec{reply: okReply(t, data)}
 	c := NewModuleController(f)

@@ -1,12 +1,12 @@
 // get_requirements: requirements of a module (current or baseline view).
-string moduleId = {{.moduleId}}
+string modulePath = {{.modulePath}}
 string baselineId = {{.baselineId}}
 
-Module m = open(moduleId, false)
+Module m = open(modulePath, false)
 string result
 
 if (m == null) {
-	result = jerr("module not found: " + moduleId)
+	result = jerr("module not found: " + modulePath)
 } else {
 	bool ok = true
 	if (baselineId != "") {
@@ -32,7 +32,7 @@ if (m == null) {
 			}
 			first = false
 			result = result + "{\"id\":" + jstr(intToStr(o."Object Number"))
-				+ ",\"moduleId\":" + jstr(moduleId)
+				+ ",\"modulePath\":" + jstr(modulePath)
 				+ ",\"baselineId\":" + jstr(baselineId)
 				+ ",\"heading\":" + jstr(o."Object Heading")
 				+ ",\"text\":" + jstr(o."Object Text")

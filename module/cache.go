@@ -53,7 +53,7 @@ func (c *Cache) GetModule(path, baselineID string) *Module {
 func (c *Cache) PutRequirement(r *Requirement) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.requirements[requirementKey(r.ModuleID, r.ID, r.BaselineID)] = r
+	c.requirements[requirementKey(r.ModulePath, r.ID, r.BaselineID)] = r
 }
 func (c *Cache) GetRequirement(moduleID, reqID, baselineID string) *Requirement {
 	c.mu.RLock()
@@ -84,7 +84,7 @@ func (c *Cache) InvalidateModule(moduleRef string) {
 	}
 	delete(c.baselines, moduleRef)
 	for rid, r := range c.requirements {
-		if r.ModuleID == moduleRef {
+		if r.ModulePath == moduleRef {
 			delete(c.requirements, rid)
 		}
 	}

@@ -89,7 +89,7 @@ func (c *ModuleController) ListModules(folderPath string) ([]Module, error) {
 // GetRequirements fetches all requirements of a module and caches them.
 func (c *ModuleController) GetRequirements(moduleID, baselineID string) ([]Requirement, error) {
 	raw, err := c.dxl.ExecTemplate("get_requirements", map[string]dxl.DxlLiteral{
-		"moduleId":   dxl.String(moduleID),
+		"modulePath":   dxl.String(moduleID),
 		"baselineId": dxl.String(baselineID),
 	})
 	if err != nil {
@@ -113,7 +113,7 @@ func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
 	if bs := c.cache.GetBaselines(moduleID); bs != nil {
 		return bs, nil
 	}
-	raw, err := c.dxl.ExecTemplate("get_baselines", map[string]dxl.DxlLiteral{"moduleId": dxl.String(moduleID)})
+	raw, err := c.dxl.ExecTemplate("get_baselines", map[string]dxl.DxlLiteral{"modulePath": dxl.String(moduleID)})
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +129,7 @@ func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
 // document order, each entry linked to its parent via ParentID/Level.
 func (c *ModuleController) TraverseHierarchy(moduleID, baselineID string) ([]HierarchyEntry, error) {
 	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{
-		"moduleId":   dxl.String(moduleID),
+		"modulePath":   dxl.String(moduleID),
 		"baselineId": dxl.String(baselineID),
 	})
 	if err != nil {
