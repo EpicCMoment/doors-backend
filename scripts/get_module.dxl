@@ -11,7 +11,7 @@ if (m == null) {
 	result = jerr("module not found: " + path)
 } else {
 	result = "{\"status\":\"ok\",\"data\":{"
-		+ "\"id\":" + jstr(fullName(m)) + ","
+		+ "\"id\":" + jstr(uniqueID(m)) + ","
 		+ "\"name\":" + jstr(name(m)) + ","
 		+ "\"path\":" + jstr(fullName(m)) + ","
 		+ "\"baselineId\":" + jstr(baselineId) + ","

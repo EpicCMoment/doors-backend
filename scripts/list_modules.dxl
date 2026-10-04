@@ -15,7 +15,7 @@ for m in all Modules do {
 		}
 		first = false
 		count++
-		result = result + "{\"id\":" + jstr(fn)
+		result = result + "{\"id\":" + jstr(uniqueID(m))
 			+ ",\"name\":" + jstr(name(m))
 			+ ",\"path\":" + jstr(fn)
 			+ ",\"baselineId\":\"\""
