@@ -5,7 +5,7 @@ import "sync"
 // Cache keeps fetched modules, requirements, and baselines so repeated
 // access does not hit the DXL server again. Cache entries are keyed per
 // baseline view: a module/requirement cached at baseline B1 is distinct
-// from the same object viewed at B2 (or live).
+// from the same object viewed at B2 (or current).
 type Cache struct {
 	mu           sync.RWMutex
 	modules      map[string]*Module
@@ -23,14 +23,14 @@ func NewCache() *Cache {
 
 func moduleKey(path, baselineID string) string {
 	if baselineID == "" {
-		return path + "@live"
+		return path + "@current"
 	}
 	return path + "@" + baselineID
 }
 
 func requirementKey(moduleID, reqID, baselineID string) string {
 	if baselineID == "" {
-		return moduleID + "/" + reqID + "@live"
+		return moduleID + "/" + reqID + "@current"
 	}
 	return moduleID + "/" + reqID + "@" + baselineID
 }

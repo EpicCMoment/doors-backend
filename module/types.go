@@ -5,7 +5,7 @@ type Module struct {
 	ID            string `json:"id"`
 	Name          string `json:"name"`
 	Path          string `json:"path"`
-	BaselineID    string `json:"baselineId,omitempty"` // empty = live view
+	BaselineID    string `json:"baselineId,omitempty"` // empty = current view
 	CreatedOn     string `json:"createdOn,omitempty"`
 	ModifiedOn    string `json:"modifiedOn,omitempty"`
 	BaselineCount int    `json:"baselineCount,omitempty"`
@@ -15,7 +15,7 @@ type Module struct {
 type Requirement struct {
 	ID         string            `json:"id"`
 	ModuleID   string            `json:"moduleId"`
-	BaselineID string            `json:"baselineId,omitempty"` // empty = live view
+	BaselineID string            `json:"baselineId,omitempty"` // empty = current view
 	Heading    string            `json:"heading"`
 	Text       string            `json:"text"`
 	CreatedBy  string            `json:"createdBy,omitempty"`
