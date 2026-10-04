@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"gitlab.com/ariffil/doors-backend/dxl"
+	"github.com/ariffil/doors-backend/dxl"
 )
 
 type fakeExec struct {

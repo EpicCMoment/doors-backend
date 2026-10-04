@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"gitlab.com/ariffil/doors-backend/dxl"
+	"github.com/ariffil/doors-backend/dxl"
 )
 
 // ExecClient is the transport ModuleController needs; *dxl.DxlController satisfies it.
