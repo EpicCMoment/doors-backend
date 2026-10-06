@@ -8,7 +8,7 @@ Backend library that bridges Go to a DOORS 9.7 instance over its DXL TCP server.
 - **DXL string concat**: no `+` operator — adjacent operands concatenate (`a b` / `result = result ","`). Always assign via intermediate string for concatenated arguments in calls (`jerr(...)`, `baselineName(...)`).
 - **Envelope**: every utility script ends with `return_ = result` where `result` is `{"status":"ok"|"error","data"|"message"}`. `module.decodeEnvelope` validates it.
 - **Module identity is split**: `Item.ID = uniqueID(m)` (DOORS unique ID), `ModulePath = fullName(m)` (what `open()` accepts). Cache module keys and `moduleId`-style params are paths; renaming `moduleId -> modulePath` was deliberate — keep it when touching new code.
-- **Baseline dimension**: all content structs carry `BaselineID`; `""` means the current view. Cache keys are baseline-aware (`path@current`, `modulePath/reqID@baseline`). Reading a baseline uses `load(m, b, false)` → returns a `Module` to iterate, never the older two-arg form.
+- **Baseline dimension**: all content structs carry `Baseline`; `""` means the current view. Cache keys are baseline-aware (`path@current`, `modulePath/reqID@baseline`). Reading a baseline uses `load(m, b, false)` → returns a `Module` to iterate, never the older two-arg form.
 - **Baseline name**: preamble helper `baselineName(b) = "<major>.<minor><suffix> (<annotation>)"` for both id and name.
 - **Template cache lives in `dxl.DxlController`** (`TemplateCache`), seeded in `DoorsController.Init` with `scripts.Load(name)`. Preamble (JSON helpers: `jsonEscape`, `jstr`, `intToStr`, `jerr`, `baselineName`) is prepended by `scripts.Load`.
 - **DoorsController is a singleton** built by `backend.Init(cfg)`; failed init keeps `Default()` returning an error.

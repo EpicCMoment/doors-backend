@@ -44,7 +44,7 @@ func (c *Cache) PutModule(m *Item) {
 	if key == "" {
 		key = m.ID
 	}
-	c.modules[moduleKey(key, m.BaselineID)] = m
+	c.modules[moduleKey(key, m.Baseline)] = m
 }
 func (c *Cache) GetModule(path, baselineID string) *Item {
 	c.mu.RLock()
@@ -55,7 +55,7 @@ func (c *Cache) GetModule(path, baselineID string) *Item {
 func (c *Cache) PutRequirement(r *Requirement) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.requirements[requirementKey(r.ModulePath, r.ID, r.BaselineID)] = r
+	c.requirements[requirementKey(r.ModulePath, r.ID, r.Baseline)] = r
 }
 func (c *Cache) GetRequirement(moduleID, reqID, baselineID string) *Requirement {
 	c.mu.RLock()

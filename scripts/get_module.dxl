@@ -1,6 +1,6 @@
 // get_module: returns module metadata as JSON.
 string path = {{.path}}
-string baselineId = {{.baselineId}}
+string baseline = {{.baseline}}
 
 Module m = open(path, false)
 string result
@@ -19,8 +19,8 @@ if (m == null) {
 	result = result "\"path\":"
 	result = result jstr(fullName(m))
 	result = result ","
-	result = result "\"baselineId\":"
-	result = result jstr(baselineId)
+	result = result "\"baseline\":"
+	result = result jstr(baseline)
 	result = result ","
 	result = result "\"createdOn\":"
 	result = result jstr("")

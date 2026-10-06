@@ -54,7 +54,7 @@ func (c *ModuleController) GetModule(path, baselineID string) (*Item, error) {
 	}
 	raw, err := c.dxl.ExecTemplate("get_module", map[string]dxl.DxlLiteral{
 		"path":       dxl.String(path),
-		"baselineId": dxl.String(baselineID),
+		"baseline": dxl.String(baselineID),
 	})
 	if err != nil {
 		return nil, err
@@ -63,8 +63,8 @@ func (c *ModuleController) GetModule(path, baselineID string) (*Item, error) {
 	if err := decodeEnvelope(raw, &it); err != nil {
 		return nil, err
 	}
-	if it.BaselineID == "" {
-		it.BaselineID = baselineID
+	if it.Baseline == "" {
+		it.Baseline = baselineID
 	}
 	if it.Type == "" {
 		it.Type = ItemModule
@@ -113,7 +113,7 @@ func (c *ModuleController) ListModules(path string) ([]Item, error) {
 func (c *ModuleController) GetRequirements(moduleID, baselineID string) ([]Requirement, error) {
 	raw, err := c.dxl.ExecTemplate("get_requirements", map[string]dxl.DxlLiteral{
 		"modulePath":   dxl.String(moduleID),
-		"baselineId": dxl.String(baselineID),
+		"baseline": dxl.String(baselineID),
 	})
 	if err != nil {
 		return nil, err
@@ -123,8 +123,8 @@ func (c *ModuleController) GetRequirements(moduleID, baselineID string) ([]Requi
 		return nil, err
 	}
 	for i := range reqs {
-		if reqs[i].BaselineID == "" {
-			reqs[i].BaselineID = baselineID
+		if reqs[i].Baseline == "" {
+			reqs[i].Baseline = baselineID
 		}
 		c.cache.PutRequirement(&reqs[i])
 	}
@@ -153,7 +153,7 @@ func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
 func (c *ModuleController) TraverseHierarchy(moduleID, baselineID string) ([]HierarchyEntry, error) {
 	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{
 		"modulePath":   dxl.String(moduleID),
-		"baselineId": dxl.String(baselineID),
+		"baseline": dxl.String(baselineID),
 	})
 	if err != nil {
 		return nil, err
@@ -163,8 +163,8 @@ func (c *ModuleController) TraverseHierarchy(moduleID, baselineID string) ([]Hie
 		return nil, err
 	}
 	for i := range entries {
-		if entries[i].BaselineID == "" {
-			entries[i].BaselineID = baselineID
+		if entries[i].Baseline == "" {
+			entries[i].Baseline = baselineID
 		}
 	}
 	return entries, nil

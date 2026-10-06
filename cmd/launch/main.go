@@ -61,7 +61,7 @@ func run(line string, d *backend.DoorsController) (string, error) {
 	parts := strings.Fields(line)
 	switch parts[0] {
 	case "help":
-		return "commands: ping | module <path> [baselineId] | mods <path> | reqs <modulePath> [baselineId] | baselines <modulePath> | hierarchy <modulePath> [baselineId] | quit", nil
+		return "commands: ping | module <path> [baseline] | mods <path> | reqs <modulePath> [baseline] | baselines <modulePath> | hierarchy <modulePath> [baseline] | quit", nil
 	case "quit", "exit":
 		os.Exit(0)
 		return "", nil
@@ -70,7 +70,7 @@ func run(line string, d *backend.DoorsController) (string, error) {
 		return string(raw), err
 	case "module":
 		if len(parts) < 2 {
-			return "", fmt.Errorf("usage: module <path> [baselineId]")
+			return "", fmt.Errorf("usage: module <path> [baseline]")
 		}
 		bl := ""
 		if len(parts) > 2 {
@@ -86,7 +86,7 @@ func run(line string, d *backend.DoorsController) (string, error) {
 		return pretty(mods), err
 	case "reqs":
 		if len(parts) < 2 {
-			return "", fmt.Errorf("usage: reqs <modulePath> [baselineId]")
+			return "", fmt.Errorf("usage: reqs <modulePath> [baseline]")
 		}
 		bl := ""
 		if len(parts) > 2 {
@@ -102,7 +102,7 @@ func run(line string, d *backend.DoorsController) (string, error) {
 		return pretty(bs), err
 	case "hierarchy":
 		if len(parts) < 2 {
-			return "", fmt.Errorf("usage: hierarchy <modulePath> [baselineId]")
+			return "", fmt.Errorf("usage: hierarchy <modulePath> [baseline]")
 		}
 		bl := ""
 		if len(parts) > 2 {

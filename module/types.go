@@ -17,7 +17,7 @@ type Item struct {
 	Name       string   `json:"name"`
 	Path       string   `json:"path"`
 	Type       ItemType `json:"type"`
-	BaselineID string   `json:"baselineId,omitempty"`
+	Baseline string   `json:"baseline,omitempty"`
 	CreatedOn  string   `json:"createdOn,omitempty"`
 	ModifiedOn string   `json:"modifiedOn,omitempty"`
 }
@@ -26,7 +26,7 @@ type Item struct {
 type Requirement struct {
 	ID         string            `json:"id"`
 	ModulePath   string            `json:"modulePath"`
-	BaselineID string            `json:"baselineId,omitempty"` // empty = current view
+	Baseline string            `json:"baseline,omitempty"` // empty = current view
 	Heading    string            `json:"heading"`
 	Text       string            `json:"text"`
 	CreatedBy  string            `json:"createdBy,omitempty"`
@@ -49,7 +49,7 @@ type Table struct {
 	ID            string   `json:"id"`
 	ModulePath      string   `json:"modulePath"`
 	RequirementID string   `json:"requirementId"`
-	BaselineID    string   `json:"baselineId,omitempty"`
+	Baseline    string   `json:"baseline,omitempty"`
 	Title         string   `json:"title,omitempty"`
 	Columns       []string `json:"columns,omitempty"`
 	Rows          int      `json:"rows,omitempty"`
@@ -61,7 +61,7 @@ type Table struct {
 type HierarchyEntry struct {
 	ID         string `json:"id"`
 	ModulePath   string `json:"modulePath,omitempty"`
-	BaselineID string `json:"baselineId,omitempty"`
+	Baseline string `json:"baseline,omitempty"`
 	ParentID   string `json:"parentId,omitempty"`
 	Level      int    `json:"level"`
 	Heading    string `json:"heading,omitempty"`
