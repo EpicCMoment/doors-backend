@@ -32,11 +32,11 @@ func moduleKey(path, baseline string) string {
 	return path + "@" + baseline
 }
 
-func requirementKey(moduleID, reqID, baseline string) string {
+func requirementKey(modulePath, reqID, baseline string) string {
 	if baseline == "" {
-		return moduleID + "/" + reqID + "@current"
+		return modulePath + "/" + reqID + "@current"
 	}
-	return moduleID + "/" + reqID + "@" + baseline
+	return modulePath + "/" + reqID + "@" + baseline
 }
 
 func (c *Cache) PutModule(m *Item) {
@@ -59,21 +59,21 @@ func (c *Cache) PutRequirement(r *Requirement) {
 	defer c.mu.Unlock()
 	c.requirements[requirementKey(r.ModulePath, r.ID, r.Baseline)] = r
 }
-func (c *Cache) GetRequirement(moduleID, reqID, baseline string) *Requirement {
+func (c *Cache) GetRequirement(modulePath, reqID, baseline string) *Requirement {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.requirements[requirementKey(moduleID, reqID, baseline)]
+	return c.requirements[requirementKey(modulePath, reqID, baseline)]
 }
 
-func (c *Cache) PutBaselines(moduleID string, bs []Baseline) {
+func (c *Cache) PutBaselines(modulePath string, bs []Baseline) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.baselines[moduleID] = bs
+	c.baselines[modulePath] = bs
 }
-func (c *Cache) GetBaselines(moduleID string) []Baseline {
+func (c *Cache) GetBaselines(modulePath string) []Baseline {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.baselines[moduleID]
+	return c.baselines[modulePath]
 }
 
 // InvalidateModule drops cached entries for one module (all baselines, and its
