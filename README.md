@@ -9,8 +9,8 @@ DXL TCP server. It is the core of the DOORS MCP server.
 - `runner.go`, `runner_windows.go`, `runner_unix.go` — spawn `doors -batch` with the extracted DXL server script
 - `doors_controller.go` — singleton `DoorsController`, created via `backend.Init(cfg)`
 - `dxl/` — `DxlController` (TCP client, one conn/request, serialized), template cache, typed `DxlLiteral` injection, embedded DXL TCP server (`dxl/server/dxl_server.dxl`)
-- `module/` — `ModuleController`: typed API + baseline-aware cache for modules, requirements, baselines, flat hierarchy
-- `scripts/` — embedded utility DXL scripts (`ping`, `get_module`, `list_items`, `get_requirements`, `get_baselines`, `traverse_hierarchy`), each producing a JSON envelope assigned to `return_`
+- `module/` — `ModuleController`: typed API + baseline-aware cache for items, modules, requirements, baselines, flat hierarchy
+- `scripts/` — embedded utility DXL scripts (`ping` (self-test only), `get_module`, `list_items`, `get_requirements`, `get_baselines`, `traverse_hierarchy`), each producing a JSON envelope assigned to `return_`
 
 ## Status
 
