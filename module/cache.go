@@ -23,18 +23,18 @@ func NewCache() *Cache {
 	}
 }
 
-func moduleKey(path, baselineID string) string {
-	if baselineID == "" {
+func moduleKey(path, baseline string) string {
+	if baseline == "" {
 		return path + "@current"
 	}
-	return path + "@" + baselineID
+	return path + "@" + baseline
 }
 
-func requirementKey(moduleID, reqID, baselineID string) string {
-	if baselineID == "" {
+func requirementKey(moduleID, reqID, baseline string) string {
+	if baseline == "" {
 		return moduleID + "/" + reqID + "@current"
 	}
-	return moduleID + "/" + reqID + "@" + baselineID
+	return moduleID + "/" + reqID + "@" + baseline
 }
 
 func (c *Cache) PutModule(m *Item) {
@@ -46,10 +46,10 @@ func (c *Cache) PutModule(m *Item) {
 	}
 	c.modules[moduleKey(key, m.Baseline)] = m
 }
-func (c *Cache) GetModule(path, baselineID string) *Item {
+func (c *Cache) GetModule(path, baseline string) *Item {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.modules[moduleKey(path, baselineID)]
+	return c.modules[moduleKey(path, baseline)]
 }
 
 func (c *Cache) PutRequirement(r *Requirement) {
@@ -57,10 +57,10 @@ func (c *Cache) PutRequirement(r *Requirement) {
 	defer c.mu.Unlock()
 	c.requirements[requirementKey(r.ModulePath, r.ID, r.Baseline)] = r
 }
-func (c *Cache) GetRequirement(moduleID, reqID, baselineID string) *Requirement {
+func (c *Cache) GetRequirement(moduleID, reqID, baseline string) *Requirement {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.requirements[requirementKey(moduleID, reqID, baselineID)]
+	return c.requirements[requirementKey(moduleID, reqID, baseline)]
 }
 
 func (c *Cache) PutBaselines(moduleID string, bs []Baseline) {
