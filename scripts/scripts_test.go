@@ -6,7 +6,7 @@ import (
 )
 
 func TestNamesContainsExpected(t *testing.T) {
-	want := []string{"ping", "get_module", "get_requirements", "get_baselines", "traverse_hierarchy"}
+	want := []string{"ping", "get_module", "list_items", "get_requirements", "get_baselines", "traverse_hierarchy"}
 	names := Names()
 	for _, w := range want {
 		found := false
