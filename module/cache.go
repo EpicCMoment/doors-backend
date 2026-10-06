@@ -5,15 +5,15 @@ import "sync"
 // Cache keeps fetched modules, requirements, and baselines so repeated
 // access does not hit the DXL server again. Cache entries are keyed per
 // baseline view: a module/requirement cached at baseline B1 is distinct
-// from the same object viewed at B2 (or current). The children map caches
-// the direct sub-items of each parent path, keyed by that parent path.
+// from the same object viewed at B2 (or current). The subItems map caches
+// the direct sub-items of each parent item, keyed by that parent path, keyed by that parent path.
 type Cache struct {
 	mu           sync.RWMutex
 	modules      map[string]*Item
 	requirements map[string]*Requirement
 	baselines    map[string][]Baseline
 	// Children of an Item, keyed by that parent's path (from list_items).
-	children    map[string][]Item
+	subItems    map[string][]Item
 }
 
 func NewCache() *Cache {
@@ -21,7 +21,7 @@ func NewCache() *Cache {
 		modules:      map[string]*Item{},
 		requirements: map[string]*Requirement{},
 		baselines:    map[string][]Baseline{},
-		children:    map[string][]Item{},
+		subItems:    map[string][]Item{},
 	}
 }
 
@@ -94,15 +94,15 @@ func (c *Cache) InvalidateModule(moduleRef string) {
 	}
 }
 
-func (c *Cache) PutChildren(path string, items []Item) {
+func (c *Cache) PutSubItems(path string, items []Item) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.children[path] = items
+	c.subItems[path] = items
 }
-func (c *Cache) GetChildren(path string) []Item {
+func (c *Cache) GetSubItems(path string) []Item {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
-	return c.children[path]
+	return c.subItems[path]
 }
 
 // Clear drops everything.
@@ -112,5 +112,5 @@ func (c *Cache) Clear() {
 	c.modules = map[string]*Item{}
 	c.requirements = map[string]*Requirement{}
 	c.baselines = map[string][]Baseline{}
-	c.children = map[string][]Item{}
+	c.subItems = map[string][]Item{}
 }

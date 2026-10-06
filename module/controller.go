@@ -76,7 +76,7 @@ func (c *ModuleController) GetModule(path, baseline string) (*Item, error) {
 // ListItems returns the database items (projects, folders, modules) directly
 // under the given path, from cache if present.
 func (c *ModuleController) ListItems(path string) ([]Item, error) {
-	if items := c.cache.GetChildren(path); items != nil {
+	if items := c.cache.GetSubItems(path); items != nil {
 		return items, nil
 	}
 	raw, err := c.dxl.ExecTemplate("list_items", map[string]dxl.DxlLiteral{"path": dxl.String(path)})
@@ -87,7 +87,7 @@ func (c *ModuleController) ListItems(path string) ([]Item, error) {
 	if err := decodeEnvelope(raw, &items); err != nil {
 		return nil, err
 	}
-	c.cache.PutChildren(path, items)
+	c.cache.PutSubItems(path, items)
 	return items, nil
 }
 
