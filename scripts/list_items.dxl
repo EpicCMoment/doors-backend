@@ -1,0 +1,5 @@
+// list_items: enumerate direct children of the given path:
+// Projects, Folders, and Modules as Item objects.
+// Body intentionally left for implementation by the DXL author;
+// it must set return_ to "{\"status\":\"ok\",\"data\":[...]}".
+return_ = "{\"status\":\"error\",\"message\":\"list_items not implemented yet\"}"

@@ -70,18 +70,39 @@ func (c *ModuleController) GetModule(path, baselineID string) (*Module, error) {
 	return &m, nil
 }
 
-// ListModules returns the modules directly under the given folder path.
-func (c *ModuleController) ListModules(folderPath string) ([]Module, error) {
-	raw, err := c.dxl.ExecTemplate("list_modules", map[string]dxl.DxlLiteral{"path": dxl.String(folderPath)})
+// ListItems returns the database items (projects, folders, modules) directly
+// under the given path, from cache if present.
+func (c *ModuleController) ListItems(path string) ([]Item, error) {
+	if items := c.cache.GetItems(path); items != nil {
+		return items, nil
+	}
+	raw, err := c.dxl.ExecTemplate("list_items", map[string]dxl.DxlLiteral{"path": dxl.String(path)})
+	if err != nil {
+		return nil, err
+	}
+	var items []Item
+	if err := decodeEnvelope(raw, &items); err != nil {
+		return nil, err
+	}
+	c.cache.PutItems(path, items)
+	return items, nil
+}
+
+// ListModules returns the modules directly under the given folder/project path.
+// It is a convenience wrapper around ListItems.
+func (c *ModuleController) ListModules(path string) ([]Module, error) {
+	items, err := c.ListItems(path)
 	if err != nil {
 		return nil, err
 	}
 	var mods []Module
-	if err := decodeEnvelope(raw, &mods); err != nil {
-		return nil, err
-	}
-	for i := range mods {
-		c.cache.PutModule(&mods[i])
+	for _, it := range items {
+		if it.Type != ItemModule {
+			continue
+		}
+		m := Module{ID: it.ID, Name: it.Name, Path: it.Path, BaselineID: it.BaselineID}
+		c.cache.PutModule(&m)
+		mods = append(mods, m)
 	}
 	return mods, nil
 }

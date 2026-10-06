@@ -11,6 +11,7 @@ type Cache struct {
 	modules      map[string]*Module
 	requirements map[string]*Requirement
 	baselines    map[string][]Baseline
+	items        map[string][]Item
 }
 
 func NewCache() *Cache {
@@ -18,6 +19,7 @@ func NewCache() *Cache {
 		modules:      map[string]*Module{},
 		requirements: map[string]*Requirement{},
 		baselines:    map[string][]Baseline{},
+		items:        map[string][]Item{},
 	}
 }
 
@@ -90,6 +92,17 @@ func (c *Cache) InvalidateModule(moduleRef string) {
 	}
 }
 
+func (c *Cache) PutItems(path string, items []Item) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.items[path] = items
+}
+func (c *Cache) GetItems(path string) []Item {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.items[path]
+}
+
 // Clear drops everything.
 func (c *Cache) Clear() {
 	c.mu.Lock()
@@ -97,4 +110,5 @@ func (c *Cache) Clear() {
 	c.modules = map[string]*Module{}
 	c.requirements = map[string]*Requirement{}
 	c.baselines = map[string][]Baseline{}
+	c.items = map[string][]Item{}
 }

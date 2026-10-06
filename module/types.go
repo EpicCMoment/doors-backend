@@ -1,6 +1,26 @@
 package module
 
-// Module mirrors the JSON object returned by get_module / list_modules scripts.
+// ItemType is the kind of a database element.
+type ItemType string
+
+const (
+	ItemProject ItemType = "project"
+	ItemFolder  ItemType = "folder"
+	ItemModule  ItemType = "module"
+)
+
+// Item is one element of the DOORS database tree: a Project, Folder, or Module.
+// Projects and Folders are discoverable containers; a Module is a document
+// holding requirements.
+type Item struct {
+	ID         string   `json:"id"`
+	Name       string   `json:"name"`
+	Path       string   `json:"path"`
+	Type       ItemType `json:"type"`
+	BaselineID string   `json:"baselineId,omitempty"`
+}
+
+// Module mirrors the JSON object returned by get_module.
 type Module struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
