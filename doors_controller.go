@@ -47,6 +47,11 @@ func Init(cfg Config) (*DoorsController, error) {
 			}
 			d.dxl.MustRegisterTemplate(name, body)
 		}
+		if _, err := d.Ping(); err != nil {
+			_ = d.runner.Stop()
+			doorsErr = err
+			return
+		}
 		doorsDefault = d
 	})
 	return doorsDefault, doorsErr
@@ -65,6 +70,14 @@ func (d *DoorsController) Modules() *module.ModuleController { return d.modules 
 
 // Dxl exposes the DXL controller for advanced use.
 func (d *DoorsController) Dxl() *dxl.DxlController { return d.dxl }
+
+// Ping tests the live connection between the backend and the DOORS process.
+func (d *DoorsController) Ping() ([]byte, error) {
+	if d.dxl == nil {
+		return nil, errors.New("backend not initialized")
+	}
+	return d.dxl.ExecTemplate("ping", nil)
+}
 
 // Runner exposes the underlying runner.
 func (d *DoorsController) Runner() *Runner { return d.runner }

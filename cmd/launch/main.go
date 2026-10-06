@@ -66,7 +66,7 @@ func run(line string, d *backend.DoorsController) (string, error) {
 		os.Exit(0)
 		return "", nil
 	case "ping":
-		raw, err := d.Dxl().ExecTemplate("ping", nil)
+		raw, err := d.Ping()
 		return string(raw), err
 	case "module":
 		if len(parts) < 2 {
