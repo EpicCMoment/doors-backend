@@ -48,7 +48,7 @@ func decodeEnvelope(raw []byte, dst any) error {
 }
 
 // GetModule returns a module's current view (baselineID == "") or a baseline view.
-func (c *ModuleController) GetModule(path, baselineID string) (*Module, error) {
+func (c *ModuleController) GetModule(path, baselineID string) (*Item, error) {
 	if m := c.cache.GetModule(path, baselineID); m != nil {
 		return m, nil
 	}
@@ -59,15 +59,18 @@ func (c *ModuleController) GetModule(path, baselineID string) (*Module, error) {
 	if err != nil {
 		return nil, err
 	}
-	var m Module
-	if err := decodeEnvelope(raw, &m); err != nil {
+	var it Item
+	if err := decodeEnvelope(raw, &it); err != nil {
 		return nil, err
 	}
-	if m.BaselineID == "" {
-		m.BaselineID = baselineID
+	if it.BaselineID == "" {
+		it.BaselineID = baselineID
 	}
-	c.cache.PutModule(&m)
-	return &m, nil
+	if it.Type == "" {
+		it.Type = ItemModule
+	}
+	c.cache.PutModule(&it)
+	return &it, nil
 }
 
 // ListItems returns the database items (projects, folders, modules) directly
@@ -90,19 +93,18 @@ func (c *ModuleController) ListItems(path string) ([]Item, error) {
 
 // ListModules returns the modules directly under the given folder/project path.
 // It is a convenience wrapper around ListItems.
-func (c *ModuleController) ListModules(path string) ([]Module, error) {
+func (c *ModuleController) ListModules(path string) ([]Item, error) {
 	items, err := c.ListItems(path)
 	if err != nil {
 		return nil, err
 	}
-	var mods []Module
+	var mods []Item
 	for _, it := range items {
 		if it.Type != ItemModule {
 			continue
 		}
-		m := Module{ID: it.ID, Name: it.Name, Path: it.Path, BaselineID: it.BaselineID}
-		c.cache.PutModule(&m)
-		mods = append(mods, m)
+		c.cache.PutModule(&it)
+		mods = append(mods, it)
 	}
 	return mods, nil
 }

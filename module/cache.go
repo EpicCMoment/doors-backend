@@ -8,7 +8,7 @@ import "sync"
 // from the same object viewed at B2 (or current).
 type Cache struct {
 	mu           sync.RWMutex
-	modules      map[string]*Module
+	modules      map[string]*Item
 	requirements map[string]*Requirement
 	baselines    map[string][]Baseline
 	items        map[string][]Item
@@ -16,7 +16,7 @@ type Cache struct {
 
 func NewCache() *Cache {
 	return &Cache{
-		modules:      map[string]*Module{},
+		modules:      map[string]*Item{},
 		requirements: map[string]*Requirement{},
 		baselines:    map[string][]Baseline{},
 		items:        map[string][]Item{},
@@ -37,7 +37,7 @@ func requirementKey(moduleID, reqID, baselineID string) string {
 	return moduleID + "/" + reqID + "@" + baselineID
 }
 
-func (c *Cache) PutModule(m *Module) {
+func (c *Cache) PutModule(m *Item) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	key := m.Path
@@ -46,7 +46,7 @@ func (c *Cache) PutModule(m *Module) {
 	}
 	c.modules[moduleKey(key, m.BaselineID)] = m
 }
-func (c *Cache) GetModule(path, baselineID string) *Module {
+func (c *Cache) GetModule(path, baselineID string) *Item {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return c.modules[moduleKey(path, baselineID)]
@@ -107,7 +107,7 @@ func (c *Cache) GetItems(path string) []Item {
 func (c *Cache) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.modules = map[string]*Module{}
+	c.modules = map[string]*Item{}
 	c.requirements = map[string]*Requirement{}
 	c.baselines = map[string][]Baseline{}
 	c.items = map[string][]Item{}

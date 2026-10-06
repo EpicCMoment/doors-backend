@@ -33,7 +33,7 @@ func okReply(t *testing.T, data json.RawMessage) []byte {
 }
 
 func TestGetModuleFetchesAndCaches(t *testing.T) {
-	data, _ := json.Marshal(Module{ID: "1", Name: "M", Path: "/P/M"})
+	data, _ := json.Marshal(Item{ID: "1", Name: "M", Path: "/P/M", Type: ItemModule})
 	f := &fakeExec{reply: okReply(t, data)}
 	c := NewModuleController(f)
 

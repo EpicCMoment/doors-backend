@@ -18,16 +18,8 @@ type Item struct {
 	Path       string   `json:"path"`
 	Type       ItemType `json:"type"`
 	BaselineID string   `json:"baselineId,omitempty"`
-}
-
-// Module mirrors the JSON object returned by get_module.
-type Module struct {
-	ID         string `json:"id"`
-	Name       string `json:"name"`
-	Path       string `json:"path"`
-	BaselineID string `json:"baselineId,omitempty"` // empty = current view
-	CreatedOn  string `json:"createdOn,omitempty"`
-	ModifiedOn string `json:"modifiedOn,omitempty"`
+	CreatedOn  string   `json:"createdOn,omitempty"`
+	ModifiedOn string   `json:"modifiedOn,omitempty"`
 }
 
 // Requirement mirrors one requirement row in a module.
