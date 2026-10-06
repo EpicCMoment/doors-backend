@@ -110,9 +110,9 @@ func (c *ModuleController) ListModules(path string) ([]Item, error) {
 }
 
 // GetRequirements fetches all requirements of a module and caches them.
-func (c *ModuleController) GetRequirements(moduleID, baseline string) ([]Requirement, error) {
+func (c *ModuleController) GetRequirements(modulePath, baseline string) ([]Requirement, error) {
 	raw, err := c.dxl.ExecTemplate("get_requirements", map[string]dxl.DxlLiteral{
-		"modulePath":   dxl.String(moduleID),
+		"modulePath":   dxl.String(modulePath),
 		"baseline": dxl.String(baseline),
 	})
 	if err != nil {
@@ -132,11 +132,11 @@ func (c *ModuleController) GetRequirements(moduleID, baseline string) ([]Require
 }
 
 // GetBaselines lists baselines of a module (cached).
-func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
-	if bs := c.cache.GetBaselines(moduleID); bs != nil {
+func (c *ModuleController) GetBaselines(modulePath string) ([]Baseline, error) {
+	if bs := c.cache.GetBaselines(modulePath); bs != nil {
 		return bs, nil
 	}
-	raw, err := c.dxl.ExecTemplate("get_baselines", map[string]dxl.DxlLiteral{"modulePath": dxl.String(moduleID)})
+	raw, err := c.dxl.ExecTemplate("get_baselines", map[string]dxl.DxlLiteral{"modulePath": dxl.String(modulePath)})
 	if err != nil {
 		return nil, err
 	}
@@ -144,15 +144,15 @@ func (c *ModuleController) GetBaselines(moduleID string) ([]Baseline, error) {
 	if err := decodeEnvelope(raw, &bs); err != nil {
 		return nil, err
 	}
-	c.cache.PutBaselines(moduleID, bs)
+	c.cache.PutBaselines(modulePath, bs)
 	return bs, nil
 }
 
 // TraverseHierarchy returns the flat requirement outline of a module, in
 // document order, each entry linked to its parent via ParentID/Level.
-func (c *ModuleController) TraverseHierarchy(moduleID, baseline string) ([]HierarchyEntry, error) {
+func (c *ModuleController) TraverseHierarchy(modulePath, baseline string) ([]HierarchyEntry, error) {
 	raw, err := c.dxl.ExecTemplate("traverse_hierarchy", map[string]dxl.DxlLiteral{
-		"modulePath":   dxl.String(moduleID),
+		"modulePath":   dxl.String(modulePath),
 		"baseline": dxl.String(baseline),
 	})
 	if err != nil {
